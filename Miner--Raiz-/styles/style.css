@@ -1,0 +1,185 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+
+:root {
+  --container-height: 600px;
+}
+
+section {
+  position: relative;
+  padding-right: 50px;
+  timeline-scope: --listTimeline;
+}
+
+.fixado {
+    position: sticky; /* Torna o elemento "grudado" em uma posição específica */
+    top: 0; /* Define a posição fixa no topo da lista */
+    background-color: #f4f4f4; /* Cor de fundo para diferenciar o item fixado */
+    z-index: 10; /* Garante que o item fixado fique acima dos outros elementos */
+}
+
+.list {
+    max-height: var(--container-height);
+    border: 2px solid #37392e;
+    border-radius: 5px;
+    scroll-snap-type: y mandatory;
+    overscroll-behavior-y: contain;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-timeline: --listTimeline block;
+
+    margin-right: 20px; /* Espaçamento à direita */
+
+    /* Estilo para alinhar à direita */
+    position: fixed; /* Fixa a lista em relação à janela */
+    right: 0; /* Alinha a lista à direita */
+    top: 100px; /* Ajusta a posição vertical */
+    width: 900px; /* Define a largura da lista */
+}
+
+.animation {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50px;
+  height: 100%;
+  background-size: 50px 40px;
+  /* background image on bottom of css for readability */
+}
+
+@supports (animation-timeline: scroll()) {
+  .animation {
+    animation: moveBackground alternate linear;
+    animation-timeline: --listTimeline;
+  }
+}
+
+@keyframes moveBackground {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 calc(var(--container-height) / -1);
+  }
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: #eee5e5;
+}
+
+li {
+  padding: 20px;
+  border-top: 1px solid #ccc;
+  scroll-snap-align: start;
+}
+
+li:first-child {
+  border: 0;
+}
+
+/* Demo styles */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  color: #37392e;
+  background: #ddcecd;
+  font-family: "Poppins", sans-serif;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #28afb0;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #19647e;
+}
+
+
+.cabecalho a {
+    text-decoration: none; /* Remove o sublinhado */
+    color: inherit; /* Faz o link herdar a cor do elemento pai (botão) */
+    display: inline-block; /* Garante que o link respeite o layout do botão */
+    width: 100%; /* Faz o link ocupar toda a área do botão */
+    height: 100%; /* Faz o link ocupar toda a área do botão */
+    text-align: center; /* Centraliza o texto dentro do link */
+    line-height: inherit; /* Herda o espaçamento vertical do botão */
+    font-family: "Poppins", sans-serif;
+}
+
+.cabecalho {
+    display: flex; /* Ativa o flexbox */
+    justify-content: right; /* Centraliza os botões horizontalmente */
+    align-items: center; /* Alinha os botões verticalmente no centro do cabeçalho */
+    height: 80px; /* Define a altura do cabeçalho */
+    background-color: #f4f4f4; /* Cor de fundo do cabeçalho */
+    position: fixed; /* Fixa o cabeçalho no topo da página */
+    top: 0; /* Garante que o cabeçalho fique no topo */
+    width: 100%; /* Faz o cabeçalho ocupar toda a largura da página */
+    z-index: 1000; /* Garante que o cabeçalho fique acima de outros elementos */
+}
+
+.centraliza-botoes {
+    display: flex; /* Ativa o flexbox */
+    justify-content: right; /* Centraliza os botões horizontalmente */
+    align-items: center; /* Alinha os botões verticalmente */
+    gap: 10px; /* Espaçamento entre os botões */
+    margin-right: 20px; /* Espaçamento à direita */
+}
+
+/* Estilo básico para um botão */
+button {
+    background-color: #e9760b; /* Cor de fundo */
+    color: white; /* Cor do texto */
+    padding: 10px 20px; /* Espaçamento interno */
+    border: none; /* Remove a borda padrão */
+    border-radius: 5px; /* Bordas arredondadas */
+    cursor: pointer; /* Mostra o cursor de "mão" ao passar o mouse */
+    font-size: 16px; /* Tamanho da fonte */
+    margin-left: 10px;
+    container: relative;
+    transition: background-color 0.5s, transform 0.3s; /* Transição suave para cor de fundo e transformação */
+}
+
+/* Estilo ao passar o mouse */
+button:hover {
+    background-color: #9b5d02; /* Cor de fundo ao passar o mouse */
+}
+
+/* Estilo ao clicar */
+button:active {
+    background-color: #3e8e41; /* Cor de fundo ao clicar */
+    transform: scale(0.98); /* Efeito de "pressionar" */
+}
+
+/* Estilo para botões desabilitados */
+button:disabled {
+    background-color: #ccc; /* Cor de fundo para desabilitado */
+    cursor: not-allowed; /* Cursor indicando que não é clicável */
+}
