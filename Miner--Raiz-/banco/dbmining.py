@@ -39,13 +39,13 @@ class Clientes(base):
     nome = Column(String(50)) #Aqui eu defino a coluna nome como string com tamanho 50
     cpf_cnpj = Column(String(20)) #Aqui eu defino a coluna cpf/cnpj como string com tamanho 20
     nome_fantasia = Column(String(50)) #Aqui eu defino a coluna telefone como string com tamanho 50
-    localizacao = Column(String(50)) #Aqui eu defino a coluna localização como string com tamanho 50
+    cep = Column(String(9)) #Aqui eu defino a coluna localização como string com tamanho 50
 
-    def __init__(self, nome, cpf_cnpj, nome_fantasia, localizacao): #Aqui eu crio o construtor da classe
+    def __init__(self, nome, cpf_cnpj, nome_fantasia, cep): #Aqui eu crio o construtor da classe
         self.nome = nome #Aqui eu defino o nome do cliente
         self.cpf_cnpj = cpf_cnpj #Aqui eu defino o cpf/cnpj do cliente
         self.nome_fantasia = nome_fantasia #Aqui eu defino o nome fantasia do cliente
-        self.localizacao = localizacao #Aqui eu defino a localização do cliente
+        self.cep = cep #Aqui eu defino a localização do cliente
 
 base.metadata.create_all(db) #Aqui eu crio as tabelas no banco de dados
 

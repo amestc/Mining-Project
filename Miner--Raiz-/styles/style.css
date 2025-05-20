@@ -4,10 +4,76 @@
   --container-height: 600px;
 }
 
+.cabecalho, .logo {
+    display: flex; /* Ativa o flexbox */
+    justify-content: left; /* Centraliza os botões horizontalmente */
+    align-items: center; /* Alinha os botões verticalmente */
+    gap: 10px; /* Espaçamento entre os botões */
+    margin-right: 20px; /* Espaçamento à direita */
+}
+
+.logo {
+    display: flex; /* Ativa o flexbox */
+    justify-content: left; /* Centraliza os botões horizontalmente */
+    align-items: center; /* Alinha os botões verticalmente */
+    gap: 10px; /* Espaçamento entre os botões */
+    margin-right: 20px; /* Espaçamento à direita */
+}
+
+.info_barra {
+  background-color: #f4f4f4;
+  padding: auto;
+  margin-top: 4vh; /* Espaço entre a barra e a lista */
+  border: solid #37392e;
+  border-width: 2px 4px 5px 2px; /* Borda superior e inferior */
+  border-radius: 200px;
+  display: flex;
+  align-items: center; /* Centraliza o conteúdo verticalmente */
+  height: 5vh; /* Ajuste conforme necessário */
+  width: 600px; /* Ajusta a largura automaticamente */
+}
+
+/* Destaca o cabeçalho da lista */
+.fixado {
+    font-weight: bold;
+    background-color: #ffe0b2;
+    color: #333;
+}
+
+/* Destaca os itens ao passar o mouse */
+.list ul li:not(.fixado):hover {
+    background-color: #f9d9b7;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
 section {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start; /* Alinha pelo topo */
+  justify-content: space-between; /* Um em cada extremo */
+  min-height: 600px;
   position: relative;
-  padding-right: 50px;
-  timeline-scope: --listTimeline;
+  padding: 0 50px; /* Espaço nas laterais */
+}
+
+/* Ajuste a info_edit para não ocupar a tela toda */
+.info_edit {
+  background-color: #f4f4f4;
+  padding: auto;
+  margin-top: 4vh;
+  border: solid #37392e;
+  border-width: 2px 4px 5px 2px; /* Borda superior e inferior */
+  border-radius: 8px;
+  margin-left: 30px; /* Espaço entre a lista e o TESTE */
+  display: flex;
+  align-items: center; /* Centraliza o conteúdo verticalmente */
+  height: auto; /* Ajuste conforme necessário */
+  width: auto; /* Ajusta a largura automaticamente */
+  min-width: 180px; /* Mesma largura para alinhar bem */
+  min-height: 40px; /* Mesma altura para alinhar bem */
+  box-sizing: content-box; /* Inclui padding e border no tamanho total */
+  text-align: center; /* Centraliza o texto */
 }
 
 .fixado {
@@ -30,7 +96,6 @@ section {
     margin-right: 20px; /* Espaçamento à direita */
 
     /* Estilo para alinhar à direita */
-    position: fixed; /* Fixa a lista em relação à janela */
     right: 0; /* Alinha a lista à direita */
     top: 100px; /* Ajusta a posição vertical */
     width: 900px; /* Define a largura da lista */
@@ -93,7 +158,6 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
   min-height: 100vh;
   color: #37392e;
   background: #ddcecd;
@@ -134,15 +198,21 @@ body {
 }
 
 .cabecalho {
-    display: flex; /* Ativa o flexbox */
-    justify-content: right; /* Centraliza os botões horizontalmente */
-    align-items: center; /* Alinha os botões verticalmente no centro do cabeçalho */
-    height: 80px; /* Define a altura do cabeçalho */
-    background-color: #f4f4f4; /* Cor de fundo do cabeçalho */
-    position: fixed; /* Fixa o cabeçalho no topo da página */
-    top: 0; /* Garante que o cabeçalho fique no topo */
-    width: 100%; /* Faz o cabeçalho ocupar toda a largura da página */
-    z-index: 1000; /* Garante que o cabeçalho fique acima de outros elementos */
+    display: flex;
+    justify-content: center; /* Espaço entre logo e botões */
+    align-items: center;
+    height: 120px;
+    background-color: #f4f4f4;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    padding: 0 20px; /* Espaço nas laterais */
+}
+
+.logo img {
+    height: 120px; /* Ajuste conforme necessário */
+    width: auto; /* Mantém a proporção da imagem */
 }
 
 .centraliza-botoes {
@@ -182,4 +252,32 @@ button:active {
 button:disabled {
     background-color: #ccc; /* Cor de fundo para desabilitado */
     cursor: not-allowed; /* Cursor indicando que não é clicável */
+}
+
+.info_container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* Espaço entre as caixas */
+    text-anchor: middle;
+}
+
+.info_section {
+    display: flex;
+    flex-direction: row;
+    gap: 32px; /* Espaço entre as colunas */
+}
+
+.info_col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* Espaço entre as linhas */
+}
+
+.info_edit, .info_barra {
+    min-width: 180px; /* Mesma largura para alinhar bem */
+    min-height: 40px; /* Mesma altura para alinhar bem */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Outros estilos já existentes */
 }

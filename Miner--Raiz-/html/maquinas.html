@@ -5,46 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mineradora</title>
     <link rel="stylesheet" type="text/css" href="../styles/style.css">
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css"/>
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
 </head>
-<header class="cabecalho">
-    <div class="centraliza-botoes">
-        <button class="ribbon"><a href="index.html">Início</a></button>
-        <button class="ribbon"><a href="maquinas.html">Máquinas</a></button>
-        <button class="ribbon"><a href="materiais.html">Materiais</a></button>
-        <button class="ribbon"><a href="clientes.html">Clientes</a></button>
-        <button class="ribbon"><a href="simulacao.html">Simulação</a></button>
-    </div>
-</header>
 <body>
-    <section>
-        <div class="list">
-          <ul>
-            <li class="fixado">Nome&nbsp;/&nbsp;Custo&nbsp;/&nbsp;KG</li>
-            <li>Lorem Ipson Dolor</li>
-            <li>Lorem Ipson Dolor</li>
-            <li>Lorem Ipson Dolor</li>
-            <li>Lorem Ipson Dolor</li>
-            <li>Lorem Ipson Dolor</li>
-            <li>Lorem Ipson Dolor</li>
-            <li>Lorem Ipson Dolor</li>
-            <li>Lorem Ipson Dolor</li>
-            <li>Lorem Ipson Dolor</li>
-            <li>Lorem Ipson Dolor</li>
-            <li>Lorem Ipson Dolor</li>
-            <li>Lorem Ipson Dolor</li>
-            <li>Lorem Ipson Dolor</li>
-            <li>Lorem Ipson Dolor</li>
-            <li>Lorem Ipson Dolor</li>
-            <li>Lorem Ipson Dolor</li>
-            <li>Lorem Ipson Dolor</li>
-            <li>Lorem Ipson Dolor</li>
-            <li>Lorem Ipson Dolor</li>
-            <li>Lorem Ipson Dolor</li>
-            <li>Lorem Ipson Dolor</li>
-            <li>Lorem Ipson Dolor</li>
-          </ul>
+    <header class="cabecalho">
+        <div class="logo">
+            <img src="../imagens/logo.png" alt="Logo da Mineradora">
         </div>
-        <div class="animation"></div>
+        <div class="centraliza-botoes">
+            <button class="ribbon"><a href="index.html">Início</a></button>
+            <button class="ribbon"><a href="maquinas.html">Máquinas</a></button>
+            <button class="ribbon"><a href="materiais.html">Materiais</a></button>
+            <button class="ribbon"><a href="clientes.html">Clientes</a></button>
+            <button class="ribbon"><a href="simulacao.html">Simulação</a></button>
+        </div>
+    </header>
+    <section class="info_section">
+        <div class="info_col">
+            <div class="info_edit"><b>NOME DA MÁQUINA :</b></div>
+            <div class="info_edit"><b>ALUGUEL :</b></div>
+            <div class="info_edit"><b>CUSTO :</b></div>
+            <div class="info_edit"><b>KG :</b></div>
+        </div>
+        <div class="info_col">
+            <div class="info_barra">valor 1</div>
+            <div class="info_barra">valor 2</div>
+            <div class="info_barra">valor 3</div>
+            <div class="info_barra">valor 4</div>
+        </div>
+        <div class="list">
+            <ul id="lista-maquinas">
+                <li class="fixado">Nome&nbsp;/&nbsp;Aluguel&nbsp;/&nbsp;Custo&nbsp;/&nbsp;KG</li>
+            </ul>
+        </div>
     </section>
+    <script>
+document.addEventListener("DOMContentLoaded", function() {
+    async function carregarMaquinas() {
+        const response = await fetch("http://localhost:5000/maquinas");
+        const maquinas = await response.json();
+        console.log(maquinas); // Veja o que chega da API
+        const ul = document.getElementById("lista-maquinas");
+        maquinas.forEach(maquina => {
+            const li = document.createElement("li");
+            li.innerText = `${maquina.nome} / R$ ${maquina.aluguel} / R$ ${maquina.custo} / ${maquina.kg}kg`;
+            ul.appendChild(li);
+        });
+    }
+    carregarMaquinas();
+});
+        </script>
 </body>
 </html>

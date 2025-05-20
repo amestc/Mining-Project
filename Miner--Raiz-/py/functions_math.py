@@ -16,7 +16,7 @@ def get_material_por_id(material_id):
 def DistanciaCliente(cliente_id):
     cliente = session.query(Clientes).filter_by(id=cliente_id).first()
     if cliente:
-        return cliente.localizacao
+        return cliente.cep
     return None
 
 # Função para calcular a distância entre dois pontos

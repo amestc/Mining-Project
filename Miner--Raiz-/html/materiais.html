@@ -5,8 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mineradora</title>
     <link rel="stylesheet" type="text/css" href="../styles/style.css">
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css"/>
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
 </head>
+<body>
 <header class="cabecalho">
+    <div class="logo">
+        <img src="../imagens/logo.png" alt="Logo da Mineradora">
+    </div>
     <div class="centraliza-botoes">
         <button class="ribbon"><a href="index.html">Início</a></button>
         <button class="ribbon"><a href="maquinas.html">Máquinas</a></button>
@@ -15,7 +21,41 @@
         <button class="ribbon"><a href="simulacao.html">Simulação</a></button>
     </div>
 </header>
-<body>
+
+<section class="info_section">
+    <div class="info_col">
+        <div class="info_edit"><b>Nome do Material :</b></div>
+        <div class="info_edit"><b>Tipo do Material :</b></div>
+        <div class="info_edit"><b>Dureza do Material :</b></div>
+    </div>
+    <div class="info_col">
+        <div class="info_barra">valor 1</div>
+        <div class="info_barra">valor 2</div>
+        <div class="info_barra">valor 3</div>
+    </div>
+    <div class="list">
+        <ul id="lista-clientes">
+            <li class="fixado">Nome do Material&nbsp;/&nbsp;Tipo do Material&nbsp;/&nbsp;Dureza do Material</li>
+        </ul>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            async function carregarClientes() {
+                const response = await fetch("http://localhost:5000/materiais");
+                const clientes = await response.json();
+                console.log(clientes); // Veja o que chega da API
+                const ul = document.getElementById("lista-materiais");
+                clientes.forEach(materiais => {
+                    const li = document.createElement("li");
+                    li.innerText = `${materiais.nome} / ${materiais.tipo} / ${materiais.dureza}Kg`;
+                    ul.appendChild(li);
+                });
+            }
+            carregarClientes();
+        });
+    </script>
+</section>
 
 </body>
 </html>
