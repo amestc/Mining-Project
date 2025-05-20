@@ -52,8 +52,8 @@ base.metadata.create_all(db) #Aqui eu crio as tabelas no banco de dados
 #-------------------------------------------------------------------------------------------------------------------------------------
 
 # Funções CRUD para Maquinas
-def criar_maquina(nome, custo, kg):
-    maquina = Maquinas(nome=nome, custo=custo, kg=kg)
+def criar_maquina(nome, custo, aluguel, kg):
+    maquina = Maquinas(nome=nome, custo=custo, aluguel=aluguel, kg=kg)
     session.add(maquina)
     session.commit()
     return maquina
@@ -61,20 +61,28 @@ def criar_maquina(nome, custo, kg):
 def listar_maquinas():
     return session.query(Maquinas).all()
 
-def atualizar_maquina(id, nome=None, custo=None, kg=None):
-    maquina = session.query(Maquinas).get(id)
-    if maquina:
-        if nome: maquina.nome = nome
-        if custo: maquina.custo = custo
-        if kg: maquina.kg = kg
-        session.commit()
+def atualizar_maquina(id, nome=None, custo=None, aluguel=None, kg=None):
+    maquina = session.query(Maquinas).filter_by(id=id).first()
+    if not maquina:
+        return None
+    if nome is not None:
+        maquina.nome = nome
+    if custo is not None:
+        maquina.custo = custo
+    if aluguel is not None:
+        maquina.aluguel = aluguel
+    if kg is not None:
+        maquina.kg = kg
+    session.commit()
     return maquina
 
 def deletar_maquina(id):
-    maquina = session.query(Maquinas).get(id)
-    if maquina:
-        session.delete(maquina)
-        session.commit()
+    maquina = session.query(Maquinas).filter_by(id=id).first()
+    if not maquina:
+        return False
+    session.delete(maquina)
+    session.commit()
+    return True
 
 # Funções CRUD para Materiais
 def criar_material(nome, tipo, dureza):

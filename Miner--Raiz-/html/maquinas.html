@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css"/>
     <script defer src="https://pyscript.net/latest/pyscript.js"></script>
 </head>
+
 <body>
     <header class="cabecalho">
         <div class="logo">
@@ -21,7 +22,8 @@
             <button class="ribbon"><a href="simulacao.html">Simulação</a></button>
         </div>
     </header>
-    <section class="info_section">
+<section class="info_section_vertical">
+    <div class="info_section">
         <div class="info_col">
             <div class="info_edit"><b>NOME DA MÁQUINA :</b></div>
             <div class="info_edit"><b>ALUGUEL :</b></div>
@@ -29,32 +31,295 @@
             <div class="info_edit"><b>KG :</b></div>
         </div>
         <div class="info_col">
-            <div class="info_barra">valor 1</div>
-            <div class="info_barra">valor 2</div>
-            <div class="info_barra">valor 3</div>
-            <div class="info_barra">valor 4</div>
+            <div class="info_barra"></div>
+            <div class="info_barra"></div>
+            <div class="info_barra"></div>
+            <div class="info_barra"></div>
         </div>
         <div class="list">
             <ul id="lista-maquinas">
                 <li class="fixado">Nome&nbsp;/&nbsp;Aluguel&nbsp;/&nbsp;Custo&nbsp;/&nbsp;KG</li>
             </ul>
         </div>
-    </section>
+    </div>
+    <div class="Botoes2">
+        <div class="Cadastrar"><b>Cadastrar</b></div>
+        <div class="Editar"><b>Editar</b></div>
+        <div class="Excluir"><b>Excluir</b></div>
+        <input type="text" id="input-pesquisa" class="Pesquisar" placeholder="Pesquisar máquina...">
+    </div>
+</section>
     <script>
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
+    let editando = false;
+    let maquinaSelecionadaId = null;
+    let originalTexts = [];
+    const infoBarras = document.querySelectorAll(".info_barra");
+    const cadastrarBtn = document.querySelector(".Cadastrar");
+    const editarBtn = document.querySelector(".Editar");
+    const excluirBtn = document.querySelector(".Excluir");
+    const inputPesquisa = document.getElementById("input-pesquisa");
+
+    // Criação dos botões de confirmação/cancelamento (usados tanto para cadastro quanto edição)
+    const botoesContainer = document.createElement("div");
+    botoesContainer.style.marginTop = "10px";
+    botoesContainer.style.display = "flex";
+    botoesContainer.style.gap = "10px";
+
+    const confirmarBtn = document.createElement("button");
+    confirmarBtn.innerText = "Confirmar";
+    confirmarBtn.className = "ribbon";
+
+    const cancelarBtn = document.createElement("button");
+    cancelarBtn.innerText = "Cancelar";
+    cancelarBtn.className = "ribbon";
+
+    botoesContainer.appendChild(confirmarBtn);
+    botoesContainer.appendChild(cancelarBtn);
+
+    // Carregar máquinas na lista
     async function carregarMaquinas() {
         const response = await fetch("http://localhost:5000/maquinas");
         const maquinas = await response.json();
-        console.log(maquinas); // Veja o que chega da API
         const ul = document.getElementById("lista-maquinas");
+        // Limpa a lista antes de adicionar
+        ul.querySelectorAll("li:not(.fixado)").forEach(li => li.remove());
         maquinas.forEach(maquina => {
             const li = document.createElement("li");
-            li.innerText = `${maquina.nome} / R$ ${maquina.aluguel} / R$ ${maquina.custo} / ${maquina.kg}kg`;
+            li.innerText = `${maquina.id} - ${maquina.nome} / ${maquina.aluguel} / ${maquina.custo} / ${maquina.kg}`;
+            li.addEventListener("click", function() {
+                maquinaSelecionadaId = maquina.id;
+                infoBarras[0].innerText = maquina.nome;
+                infoBarras[1].innerText = maquina.aluguel;
+                infoBarras[2].innerText = maquina.custo;
+                infoBarras[3].innerText = maquina.kg;
+            });
             ul.appendChild(li);
         });
     }
     carregarMaquinas();
+
+    // Cadastro
+    cadastrarBtn.addEventListener("click", () => {
+        if (editando) return;
+        originalTexts = Array.from(infoBarras).map(el => el.innerText);
+        infoBarras.forEach(barra => {
+            barra.setAttribute("contenteditable", "true");
+            barra.innerText = "";
+        });
+        infoBarras[3].parentElement.appendChild(botoesContainer);
+        editando = "cadastro";
+    });
+
+    // Edição
+    editarBtn.addEventListener("click", () => {
+        if (editando) return;
+        const valores = Array.from(infoBarras).map(el => el.innerText.trim());
+        if (
+            valores[0] === "valor 1" ||
+            valores[1] === "valor 2" ||
+            valores[2] === "valor 3" ||
+            valores[3] === "valor 4" ||
+            !maquinaSelecionadaId
+        ) {
+            mostrarPopup("Selecione uma máquina da lista para editar.");
+            return;
+        }
+        originalTexts = valores;
+        infoBarras.forEach(barra => barra.setAttribute("contenteditable", "true"));
+        infoBarras[3].parentElement.appendChild(botoesContainer);
+        editando = "edicao";
+    });
+
+    cancelarBtn.addEventListener("click", () => {
+        if (editando === "cadastro") {
+            infoBarras.forEach((barra, i) => {
+                barra.removeAttribute("contenteditable");
+                barra.innerText = originalTexts[i];
+            });
+        } else if (editando === "edicao") {
+            infoBarras.forEach((barra, i) => {
+                barra.removeAttribute("contenteditable");
+                barra.innerText = originalTexts[i];
+            });
+        }
+        botoesContainer.remove();
+        editando = false;
+        // Não limpa maquinaSelecionadaId para manter seleção
+    });
+
+    confirmarBtn.addEventListener("click", async () => {
+        const [nome, aluguel, custo, kg] = Array.from(infoBarras).map(el => el.innerText.trim());
+        if (!nome || !aluguel || !custo || !kg) {
+            mostrarPopup("Preencha todos os campos!");
+            return;
+        }
+        if (editando === "cadastro") {
+            // Cadastro
+            const dados = {
+                nome: String(nome),
+                aluguel: parseFloat(aluguel),
+                custo: parseFloat(custo),
+                kg: parseInt(kg)
+            };
+            try {
+                const resposta = await fetch("http://localhost:5000/maquinas", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(dados)
+                });
+                if (resposta.ok) {
+                    mostrarPopup("Máquina cadastrada com sucesso!");
+                    infoBarras.forEach(barra => {
+                        barra.removeAttribute("contenteditable");
+                        barra.innerText = "";
+                    });
+                    botoesContainer.remove();
+                    editando = false;
+                    carregarMaquinas();
+                } else {
+                    const erro = await resposta.text();
+                    mostrarPopup("Erro ao cadastrar máquina.");
+                    console.error("Erro do servidor:", erro);
+                }
+            } catch (e) {
+                mostrarPopup("Erro de conexão com o servidor.");
+                console.error("Erro de rede:", e);
+            }
+        } else if (editando === "edicao") {
+            // Edição
+            mostrarPopupConfirmacao(
+                `As informações da máquina <b>${nome}</b> com o id <b>${maquinaSelecionadaId}</b> estão prestes a serem editadas, você realmente deseja fazer isso?`,
+                async () => {
+                    try {
+                        const resposta = await fetch(`http://localhost:5000/maquinas/${maquinaSelecionadaId}`, {
+                            method: "PUT",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ nome, aluguel, custo, kg })
+                        });
+                        if (resposta.ok) {
+                            mostrarPopup("Máquina editada com sucesso!");
+                            infoBarras.forEach((barra, i) => {
+                                barra.removeAttribute("contenteditable");
+                                barra.innerText = "valor " + (i + 1);
+                            });
+                            botoesContainer.remove();
+                            editando = false;
+                            maquinaSelecionadaId = null;
+                            carregarMaquinas();
+                        } else {
+                            const erro = await resposta.text();
+                            mostrarPopup("Erro ao editar máquina.");
+                            console.error("Erro do servidor:", erro);
+                        }
+                    } catch (e) {
+                        mostrarPopup("Erro de conexão com o servidor.");
+                        console.error("Erro de rede:", e);
+                    }
+                },
+                () => {
+                    // Se NÃO, cancela a operação
+                    infoBarras.forEach((barra, i) => {
+                        barra.removeAttribute("contenteditable");
+                        barra.innerText = originalTexts[i];
+                    });
+                    botoesContainer.remove();
+                    editando = false;
+                }
+            );
+        }
+    });
+
+    excluirBtn.addEventListener("click", () => {
+        if (!maquinaSelecionadaId) {
+            mostrarPopup("Selecione uma máquina para excluir.");
+            return;
+        }
+        mostrarPopupConfirmacao(
+            `Tem certeza que deseja excluir a máquina de id <b>${maquinaSelecionadaId}</b>?`,
+            async () => {
+                try {
+                    const resposta = await fetch(`http://localhost:5000/maquinas/${maquinaSelecionadaId}`, {
+                        method: "DELETE"
+                    });
+                    if (resposta.ok) {
+                        mostrarPopup("Máquina excluída com sucesso!");
+                        maquinaSelecionadaId = null;
+                        carregarMaquinas();
+                        // Limpa campos info_barra se quiser
+                    } else {
+                        mostrarPopup("Erro ao excluir máquina.");
+                    }
+                } catch (e) {
+                    mostrarPopup("Erro de conexão com o servidor.");
+                }
+            },
+            () => {} // Cancelar não faz nada
+        );
+    });
+
+    // Função para mostrar popup de confirmação
+    function mostrarPopupConfirmacao(mensagem, onConfirm, onCancel) {
+        let popup = document.getElementById("popup");
+        popup.innerHTML = `
+            <div class="popup-box">
+                <span id="popup-close" class="popup-close">×</span>
+                <p id="popup-message">${mensagem}</p>
+                <button id="popup-sim">SIM</button>
+                <button id="popup-nao">NÃO</button>
+            </div>
+        `;
+        popup.style.display = "flex";
+        document.getElementById("popup-sim").onclick = () => {
+            popup.style.display = "none";
+            onConfirm();
+        };
+        document.getElementById("popup-nao").onclick = () => {
+            popup.style.display = "none";
+            if (onCancel) onCancel();
+        };
+        document.getElementById("popup-close").onclick = () => {
+            popup.style.display = "none";
+            if (onCancel) onCancel();
+        };
+    }
+
+    // Função para mostrar popup simples
+    function mostrarPopup(mensagem) {
+        let popup = document.getElementById("popup");
+        popup.innerHTML = `
+            <div class="popup-box">
+                <span id="popup-close" class="popup-close">×</span>
+                <p id="popup-message">${mensagem}</p>
+            </div>
+        `;
+        popup.style.display = "flex";
+        document.getElementById("popup-close").onclick = () => {
+            popup.style.display = "none";
+        };
+    }
+
+    inputPesquisa.addEventListener("input", function () {
+        const termo = inputPesquisa.value.toLowerCase();
+        const lista = document.querySelectorAll("#lista-maquinas li:not(.fixado)");
+        lista.forEach(li => {
+            if (li.innerText.toLowerCase().includes(termo)) {
+                li.style.display = "";
+            } else {
+                li.style.display = "none";
+            }
+        });
+    });
 });
-        </script>
+</script>
+
+<div id="popup" style="display:none;" class="popup-overlay">
+    <div class="popup-box">
+        <span id="popup-close" class="popup-close">×</span>
+        <p id="popup-message"></p>
+    </div>
+</div>
+
+
 </body>
 </html>

@@ -4,20 +4,165 @@
   --container-height: 600px;
 }
 
-.cabecalho, .logo {
-    display: flex; /* Ativa o flexbox */
-    justify-content: left; /* Centraliza os botões horizontalmente */
-    align-items: center; /* Alinha os botões verticalmente */
-    gap: 10px; /* Espaçamento entre os botões */
-    margin-right: 20px; /* Espaçamento à direita */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.popup-box {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  min-width: 300px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  position: relative;
+  text-align: center;
+  font-family: sans-serif;
+}
+
+.popup-close {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.popup-box p {
+  margin-top: 20px;
+  font-size: 16px;
+}
+
+.Botoes2 {
+  display: flex; /* Ativa o flexbox */
+  justify-content: space-between; /* Centraliza os botões horizontalmente */
+  align-items: center; /* Alinha os botões verticalmente */
+  gap: 10px; /* Espaço entre os botões */
+  margin: 0; /* Remove margens extras */
+  padding: 0; /* Remove paddings extras */
+  margin-top: 0; /* Remove margem superior */
+  padding-top: 0; /* Remove padding superior */
+}
+
+.Cadastrar:hover,
+.Editar:hover,
+.Excluir:hover {
+  background-color: #f9d9b7;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.Pesquisar:hover {
+  background-color: #f9d9b7;
+  cursor: text;
+  transition: background 0.2s;
+}
+
+.Cadastrar,
+.Editar,
+.Excluir {
+  min-width: 280px;
+}
+
+.Cadastrar {
+  display: flex; /* Ativa o flexbox */
+  justify-content: center; /* Centraliza os botões horizontalmente */
+  align-items: center; /* Alinha os botões verticalmente */
+  background-color: #f4f4f4; /* Cor de fundo */
+  padding: 10px;
+  border: solid #37392e;
+  border-width: 2px 4px 5px 2px; /* Borda superior e inferior */
+  border-radius: 100px;
+  font-size: 20px;
+}
+
+.Editar {
+  display: flex; /* Ativa o flexbox */
+  justify-content: center; /* Centraliza os botões horizontalmente */
+  align-items: center; /* Alinha os botões verticalmente */
+  background-color: #f4f4f4; /* Cor de fundo */
+  padding: 10px;
+  border: solid #37392e;
+  border-width: 2px 4px 5px 2px; /* Borda superior e inferior */
+  border-radius: 100px;
+  font-size: 20px;
+}
+
+.Excluir {
+  display: flex; /* Ativa o flexbox */
+  justify-content: center; /* Centraliza os botões horizontalmente */
+  align-items: center; /* Alinha os botões verticalmente */
+  background-color: #f4f4f4; /* Cor de fundo */
+  padding: 10px;
+  border: solid #37392e;
+  border-width: 2px 4px 5px 2px; /* Borda superior e inferior */
+  border-radius: 100px;
+  font-size: 20px;
+}
+
+.Pesquisar {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: #f4f4f4;
+  padding: 10px 24px;
+  border: solid #37392e;
+  border-width: 2px 4px 5px 2px;
+  border-radius: 50px;
+  font-size: 20px;
+  color: #37392e;
+  min-width: 700px;
+  height: 44px;
+  box-sizing: border-box;
+  outline: none;
+  margin-right: 20px;
+  text-align: center;
+  transition: background 0.2s, border-color 0.2s;
+  box-shadow: none;
+  border-style: solid;
+}
+
+.Pesquisar::placeholder {
+  color: #b8b8b8;
+  opacity: 1;
+  font-style: italic;
+}
+
+.Pesquisar:focus {
+  background-color: #f9d9b7;
+  color: #37392e;
+}
+
+.cabecalho,
+.logo {
+  display: flex; /* Ativa o flexbox */
+  justify-content: left; /* Centraliza os botões horizontalmente */
+  align-items: center; /* Alinha os botões verticalmente */
+  gap: 10px; /* Espaçamento entre os botões */
+  margin-right: 20px; /* Espaçamento à direita */
 }
 
 .logo {
-    display: flex; /* Ativa o flexbox */
-    justify-content: left; /* Centraliza os botões horizontalmente */
-    align-items: center; /* Alinha os botões verticalmente */
-    gap: 10px; /* Espaçamento entre os botões */
-    margin-right: 20px; /* Espaçamento à direita */
+  display: flex; /* Ativa o flexbox */
+  justify-content: left; /* Centraliza os botões horizontalmente */
+  align-items: center; /* Alinha os botões verticalmente */
+  gap: 10px; /* Espaçamento entre os botões */
+  margin-right: 20px; /* Espaçamento à direita */
+}
+
+.info_barra:hover {
+  background-color: #f9d9b7;
+  cursor: text;
+  transition: background 0.2s;
 }
 
 .info_barra {
@@ -35,16 +180,16 @@
 
 /* Destaca o cabeçalho da lista */
 .fixado {
-    font-weight: bold;
-    background-color: #ffe0b2;
-    color: #333;
+  font-weight: bold;
+  background-color: #ffe0b2;
+  color: #333;
 }
 
 /* Destaca os itens ao passar o mouse */
 .list ul li:not(.fixado):hover {
-    background-color: #f9d9b7;
-    cursor: pointer;
-    transition: background 0.2s;
+  background-color: #f9d9b7;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
 section {
@@ -77,28 +222,30 @@ section {
 }
 
 .fixado {
-    position: sticky; /* Torna o elemento "grudado" em uma posição específica */
-    top: 0; /* Define a posição fixa no topo da lista */
-    background-color: #f4f4f4; /* Cor de fundo para diferenciar o item fixado */
-    z-index: 10; /* Garante que o item fixado fique acima dos outros elementos */
+  position: sticky; /* Torna o elemento "grudado" em uma posição específica */
+  top: 0; /* Define a posição fixa no topo da lista */
+  background-color: #f4f4f4; /* Cor de fundo para diferenciar o item fixado */
+  z-index: 10; /* Garante que o item fixado fique acima dos outros elementos */
 }
 
 .list {
-    max-height: var(--container-height);
-    border: 2px solid #37392e;
-    border-radius: 5px;
-    scroll-snap-type: y mandatory;
-    overscroll-behavior-y: contain;
-    overflow-x: hidden;
-    overflow-y: auto;
-    scroll-timeline: --listTimeline block;
+  max-height: var(--container-height);
+  border: 2px solid #37392e;
+  border-radius: 5px;
+  scroll-snap-type: y mandatory;
+  overscroll-behavior-y: contain;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-timeline: --listTimeline block;
 
-    margin-right: 20px; /* Espaçamento à direita */
+  margin-right: 20px; /* Espaçamento à direita */
 
-    /* Estilo para alinhar à direita */
-    right: 0; /* Alinha a lista à direita */
-    top: 100px; /* Ajusta a posição vertical */
-    width: 900px; /* Define a largura da lista */
+  /* Estilo para alinhar à direita */
+  right: 0; /* Alinha a lista à direita */
+  top: 100px; /* Ajusta a posição vertical */
+  width: 900px; /* Define a largura da lista */
+  margin-bottom: 0px; /* Remove margem inferior */
+  padding-bottom: 0px; /* Remove padding inferior */
 }
 
 .animation {
@@ -185,99 +332,110 @@ body {
   background: #19647e;
 }
 
-
 .cabecalho a {
-    text-decoration: none; /* Remove o sublinhado */
-    color: inherit; /* Faz o link herdar a cor do elemento pai (botão) */
-    display: inline-block; /* Garante que o link respeite o layout do botão */
-    width: 100%; /* Faz o link ocupar toda a área do botão */
-    height: 100%; /* Faz o link ocupar toda a área do botão */
-    text-align: center; /* Centraliza o texto dentro do link */
-    line-height: inherit; /* Herda o espaçamento vertical do botão */
-    font-family: "Poppins", sans-serif;
+  text-decoration: none; /* Remove o sublinhado */
+  color: inherit; /* Faz o link herdar a cor do elemento pai (botão) */
+  display: inline-block; /* Garante que o link respeite o layout do botão */
+  width: 100%; /* Faz o link ocupar toda a área do botão */
+  height: 100%; /* Faz o link ocupar toda a área do botão */
+  text-align: center; /* Centraliza o texto dentro do link */
+  line-height: inherit; /* Herda o espaçamento vertical do botão */
+  font-family: "Poppins", sans-serif;
 }
 
 .cabecalho {
-    display: flex;
-    justify-content: center; /* Espaço entre logo e botões */
-    align-items: center;
-    height: 120px;
-    background-color: #f4f4f4;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-    padding: 0 20px; /* Espaço nas laterais */
+  display: flex;
+  justify-content: center; /* Espaço entre logo e botões */
+  align-items: center;
+  height: 120px;
+  background-color: #f4f4f4;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  padding: 0 20px; /* Espaço nas laterais */
 }
 
 .logo img {
-    height: 120px; /* Ajuste conforme necessário */
-    width: auto; /* Mantém a proporção da imagem */
+  height: 120px; /* Ajuste conforme necessário */
+  width: auto; /* Mantém a proporção da imagem */
 }
 
 .centraliza-botoes {
-    display: flex; /* Ativa o flexbox */
-    justify-content: right; /* Centraliza os botões horizontalmente */
-    align-items: center; /* Alinha os botões verticalmente */
-    gap: 10px; /* Espaçamento entre os botões */
-    margin-right: 20px; /* Espaçamento à direita */
+  display: flex; /* Ativa o flexbox */
+  justify-content: right; /* Centraliza os botões horizontalmente */
+  align-items: center; /* Alinha os botões verticalmente */
+  gap: 10px; /* Espaçamento entre os botões */
+  margin-right: 20px; /* Espaçamento à direita */
 }
 
 /* Estilo básico para um botão */
 button {
-    background-color: #e9760b; /* Cor de fundo */
-    color: white; /* Cor do texto */
-    padding: 10px 20px; /* Espaçamento interno */
-    border: none; /* Remove a borda padrão */
-    border-radius: 5px; /* Bordas arredondadas */
-    cursor: pointer; /* Mostra o cursor de "mão" ao passar o mouse */
-    font-size: 16px; /* Tamanho da fonte */
-    margin-left: 10px;
-    container: relative;
-    transition: background-color 0.5s, transform 0.3s; /* Transição suave para cor de fundo e transformação */
+  background-color: #e9760b; /* Cor de fundo */
+  color: white; /* Cor do texto */
+  padding: 10px 20px; /* Espaçamento interno */
+  border: none; /* Remove a borda padrão */
+  border-radius: 5px; /* Bordas arredondadas */
+  cursor: pointer; /* Mostra o cursor de "mão" ao passar o mouse */
+  font-size: 16px; /* Tamanho da fonte */
+  margin-left: 10px;
+  container: relative;
+  transition: background-color 0.5s, transform 0.3s; /* Transição suave para cor de fundo e transformação */
 }
 
 /* Estilo ao passar o mouse */
 button:hover {
-    background-color: #9b5d02; /* Cor de fundo ao passar o mouse */
+  background-color: #9b5d02; /* Cor de fundo ao passar o mouse */
 }
 
 /* Estilo ao clicar */
 button:active {
-    background-color: #3e8e41; /* Cor de fundo ao clicar */
-    transform: scale(0.98); /* Efeito de "pressionar" */
+  background-color: #3e8e41; /* Cor de fundo ao clicar */
+  transform: scale(0.98); /* Efeito de "pressionar" */
 }
 
 /* Estilo para botões desabilitados */
 button:disabled {
-    background-color: #ccc; /* Cor de fundo para desabilitado */
-    cursor: not-allowed; /* Cursor indicando que não é clicável */
+  background-color: #ccc; /* Cor de fundo para desabilitado */
+  cursor: not-allowed; /* Cursor indicando que não é clicável */
 }
 
 .info_container {
-    display: flex;
-    flex-direction: column;
-    gap: 16px; /* Espaço entre as caixas */
-    text-anchor: middle;
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Espaço entre as caixas */
+  text-anchor: middle;
+}
+
+.info_section_vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  gap: 0 !important;
 }
 
 .info_section {
-    display: flex;
-    flex-direction: row;
-    gap: 32px; /* Espaço entre as colunas */
+  display: flex;
+  flex-direction: row;
+  gap: 32px;
+  width: 100%;
+  margin-bottom: 0; /* Remove margem inferior */
+  padding-bottom: 0; /* Remove padding inferior */
 }
 
 .info_col {
-    display: flex;
-    flex-direction: column;
-    gap: 16px; /* Espaço entre as linhas */
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Espaço entre as linhas */
 }
 
-.info_edit, .info_barra {
-    min-width: 180px; /* Mesma largura para alinhar bem */
-    min-height: 40px; /* Mesma altura para alinhar bem */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /* Outros estilos já existentes */
+.info_edit,
+.info_barra {
+  min-width: 180px; /* Mesma largura para alinhar bem */
+  min-height: 40px; /* Mesma altura para alinhar bem */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Outros estilos já existentes */
 }
