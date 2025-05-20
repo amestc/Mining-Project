@@ -22,24 +22,36 @@
     </div>
 </header>
 
-<section class="info_section">
+<section class="info_section_vertical">
+
+<div class="info_section">
     <div class="info_col">
-        <div class="info_edit"><b>Nome do Material :</b></div>
-        <div class="info_edit"><b>Tipo do Material :</b></div>
-        <div class="info_edit"><b>Dureza do Material :</b></div>
+        <div class="info_edit"><b>NOME DO MATERIAL :</b></div>
+        <div class="info_edit"><b>TIPO DO MATERIAL :</b></div>
+        <div class="info_edit"><b>DUREZA :</b></div>
     </div>
     <div class="info_col">
-        <div class="info_barra">valor 1</div>
-        <div class="info_barra">valor 2</div>
-        <div class="info_barra">valor 3</div>
+        <div class="info_barra"></div>
+        <div class="info_barra"></div>
+        <div class="info_barra"></div>
     </div>
     <div class="list">
-        <ul id="lista-clientes">
-            <li class="fixado">Nome do Material&nbsp;/&nbsp;Tipo do Material&nbsp;/&nbsp;Dureza do Material</li>
+        <ul id="lista-materiais">
+            <li class="fixado">ID&nbsp;/&nbsp;Nome do Material&nbsp;/&nbsp;Tipo do Material&nbsp;/&nbsp;Dureza do Material</li>
         </ul>
     </div>
 
+</div>
+
+    <div class="Botoes2">
+        <div class="Cadastrar"><b>Cadastrar</b></div>
+        <div class="Editar"><b>Editar</b></div>
+        <div class="Excluir"><b>Excluir</b></div>
+        <input type="text" id="input-pesquisa" class="Pesquisar" placeholder="Pesquisar máquina...">
+    </div>
+    
 </section>
+
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -56,7 +68,254 @@
             }
             carregarClientes();
         });
-    </script>
 
+document.addEventListener("DOMContentLoaded", function () {
+    let editando = false;
+    let materialSelecionadoId = null;
+    let originalTexts = [];
+    const infoBarras = document.querySelectorAll(".info_barra");
+    const cadastrarBtn = document.querySelector(".Cadastrar");
+    const editarBtn = document.querySelector(".Editar");
+    const excluirBtn = document.querySelector(".Excluir");
+    const inputPesquisa = document.getElementById("input-pesquisa");
+
+    const botoesContainer = document.createElement("div");
+    botoesContainer.style.marginTop = "10px";
+    botoesContainer.style.display = "flex";
+    botoesContainer.style.gap = "10px";
+
+    const confirmarBtn = document.createElement("button");
+    confirmarBtn.innerText = "Confirmar";
+    confirmarBtn.className = "ribbon";
+
+    const cancelarBtn = document.createElement("button");
+    cancelarBtn.innerText = "Cancelar";
+    cancelarBtn.className = "ribbon";
+
+    botoesContainer.appendChild(confirmarBtn);
+    botoesContainer.appendChild(cancelarBtn);
+
+    async function carregarMateriais() {
+        const response = await fetch("http://localhost:5000/materiais");
+        const materiais = await response.json();
+        const ul = document.getElementById("lista-materiais");
+        ul.querySelectorAll("li:not(.fixado)").forEach(li => li.remove());
+        materiais.forEach(material => {
+            const li = document.createElement("li");
+            li.innerText = `${material.id} - ${material.nome} / ${material.tipo} / ${material.dureza}`;
+            li.addEventListener("click", function() {
+                materialSelecionadoId = material.id;
+                infoBarras[0].innerText = material.nome;
+                infoBarras[1].innerText = material.tipo;
+                infoBarras[2].innerText = material.dureza;
+            });
+            ul.appendChild(li);
+        });
+    }
+    carregarMateriais();
+
+    // Pesquisa
+    inputPesquisa.addEventListener("input", function () {
+        const termo = inputPesquisa.value.toLowerCase();
+        const lista = document.querySelectorAll("#lista-materiais li:not(.fixado)");
+        lista.forEach(li => {
+            if (li.innerText.toLowerCase().includes(termo)) {
+                li.style.display = "";
+            } else {
+                li.style.display = "none";
+            }
+        });
+    });
+
+    // Cadastro
+    cadastrarBtn.addEventListener("click", () => {
+        if (editando) return;
+        originalTexts = Array.from(infoBarras).map(el => el.innerText);
+        infoBarras.forEach(barra => {
+            barra.setAttribute("contenteditable", "true");
+            barra.innerText = "";
+        });
+        infoBarras[2].parentElement.appendChild(botoesContainer);
+        editando = "cadastro";
+    });
+
+    // Edição
+    editarBtn.addEventListener("click", () => {
+        if (editando) return;
+        const valores = Array.from(infoBarras).map(el => el.innerText.trim());
+        if (
+            valores[0] === "valor 1" ||
+            valores[1] === "valor 2" ||
+            valores[2] === "valor 3" ||
+            !materialSelecionadoId
+        ) {
+            mostrarPopup("Selecione um material da lista para editar.");
+            return;
+        }
+        originalTexts = valores;
+        infoBarras.forEach(barra => barra.setAttribute("contenteditable", "true"));
+        infoBarras[2].parentElement.appendChild(botoesContainer);
+        editando = "edicao";
+    });
+
+    cancelarBtn.addEventListener("click", () => {
+        infoBarras.forEach((barra, i) => {
+            barra.removeAttribute("contenteditable");
+            barra.innerText = originalTexts[i];
+        });
+        botoesContainer.remove();
+        editando = false;
+    });
+
+    confirmarBtn.addEventListener("click", async () => {
+        const [nome, tipo, dureza] = Array.from(infoBarras).map(el => el.innerText.trim());
+        if (!nome || !tipo || !dureza) {
+            mostrarPopup("Preencha todos os campos!");
+            return;
+        }
+        if (editando === "cadastro") {
+            try {
+                const resposta = await fetch("http://localhost:5000/materiais", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ nome, tipo, dureza })
+                });
+                if (resposta.ok) {
+                    mostrarPopup("Material cadastrado com sucesso!");
+                    infoBarras.forEach(barra => {
+                        barra.removeAttribute("contenteditable");
+                        barra.innerText = "";
+                    });
+                    botoesContainer.remove();
+                    editando = false;
+                    carregarMateriais();
+                } else {
+                    mostrarPopup("Erro ao cadastrar material.");
+                }
+            } catch (e) {
+                mostrarPopup("Erro de conexão com o servidor.");
+            }
+        } else if (editando === "edicao") {
+            mostrarPopupConfirmacao(
+                `As informações do material <b>${nome}</b> estão prestes a serem editadas. Deseja continuar?`,
+                async () => {
+                    try {
+                        const resposta = await fetch(`http://localhost:5000/materiais/${materialSelecionadoId}`, {
+                            method: "PUT",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ nome, tipo, dureza })
+                        });
+                        if (resposta.ok) {
+                            mostrarPopup("Material editado com sucesso!");
+                            infoBarras.forEach((barra, i) => {
+                                barra.removeAttribute("contenteditable");
+                                barra.innerText = "valor " + (i + 1);
+                            });
+                            botoesContainer.remove();
+                            editando = false;
+                            materialSelecionadoId = null;
+                            carregarMateriais();
+                        } else {
+                            mostrarPopup("Erro ao editar material.");
+                        }
+                    } catch (e) {
+                        mostrarPopup("Erro de conexão com o servidor.");
+                    }
+                },
+                () => {
+                    infoBarras.forEach((barra, i) => {
+                        barra.removeAttribute("contenteditable");
+                        barra.innerText = originalTexts[i];
+                    });
+                    botoesContainer.remove();
+                    editando = false;
+                }
+            );
+        }
+    });
+
+    // Excluir
+    excluirBtn.addEventListener("click", () => {
+        if (!materialSelecionadoId) {
+            mostrarPopup("Selecione um material para excluir.");
+            return;
+        }
+        mostrarPopupConfirmacao(
+            `Tem certeza que deseja excluir o material <b>${infoBarras[0].innerText}</b>?`,
+            async () => {
+                try {
+                    const resposta = await fetch(`http://localhost:5000/materiais/${materialSelecionadoId}`, {
+                        method: "DELETE"
+                    });
+                    if (resposta.ok) {
+                        mostrarPopup("Material excluído com sucesso!");
+                        materialSelecionadoId = null;
+                        carregarMateriais();
+                        infoBarras.forEach((barra, i) => barra.innerText = "valor " + (i + 1));
+                    } else {
+                        mostrarPopup("Erro ao excluir material.");
+                    }
+                } catch (e) {
+                    mostrarPopup("Erro de conexão com o servidor.");
+                }
+            },
+            () => {}
+        );
+    });
+
+    // Funções de popup (simples e confirmação)
+    function mostrarPopupConfirmacao(mensagem, onConfirm, onCancel) {
+        let popup = document.getElementById("popup");
+        if (!popup) {
+            popup = document.createElement("div");
+            popup.id = "popup";
+            popup.className = "popup-overlay";
+            document.body.appendChild(popup);
+        }
+        popup.innerHTML = `
+            <div class="popup-box">
+                <span id="popup-close" class="popup-close">×</span>
+                <p id="popup-message">${mensagem}</p>
+                <button id="popup-sim">SIM</button>
+                <button id="popup-nao">NÃO</button>
+            </div>
+        `;
+        popup.style.display = "flex";
+        document.getElementById("popup-sim").onclick = () => {
+            popup.style.display = "none";
+            onConfirm();
+        };
+        document.getElementById("popup-nao").onclick = () => {
+            popup.style.display = "none";
+            if (onCancel) onCancel();
+        };
+        document.getElementById("popup-close").onclick = () => {
+            popup.style.display = "none";
+            if (onCancel) onCancel();
+        };
+    }
+
+    function mostrarPopup(mensagem) {
+        let popup = document.getElementById("popup");
+        if (!popup) {
+            popup = document.createElement("div");
+            popup.id = "popup";
+            popup.className = "popup-overlay";
+            document.body.appendChild(popup);
+        }
+        popup.innerHTML = `
+            <div class="popup-box">
+                <span id="popup-close" class="popup-close">×</span>
+                <p id="popup-message">${mensagem}</p>
+            </div>
+        `;
+        popup.style.display = "flex";
+        document.getElementById("popup-close").onclick = () => {
+            popup.style.display = "none";
+        };
+    }
+});
+</script>
+<div id="popup" style="display:none;" class="popup-overlay"></div>
 </body>
 </html>

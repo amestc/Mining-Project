@@ -95,23 +95,29 @@ def listar_materiais():
     return session.query(Materiais).all()
 
 def atualizar_material(id, nome=None, tipo=None, dureza=None):
-    material = session.query(Materiais).get(id)
-    if material:
-        if nome: material.nome = nome
-        if tipo: material.tipo = tipo
-        if dureza: material.dureza = dureza
-        session.commit()
+    material = session.query(Materiais).filter_by(id=id).first()
+    if not material:
+        return None
+    if nome is not None:
+        material.nome = nome
+    if tipo is not None:
+        material.tipo = tipo
+    if dureza is not None:
+        material.dureza = dureza
+    session.commit()
     return material
 
 def deletar_material(id):
-    material = session.query(Materiais).get(id)
-    if material:
-        session.delete(material)
-        session.commit()
+    material = session.query(Materiais).filter_by(id=id).first()
+    if not material:
+        return False
+    session.delete(material)
+    session.commit()
+    return True
 
 # Funções CRUD para Clientes
-def criar_cliente(nome, cpf_cnpj, nome_fantasia):
-    cliente = Clientes(nome=nome, cpf_cnpj=cpf_cnpj, nome_fantasia=nome_fantasia)
+def criar_cliente(nome, nome_fantasia, cpf_cnpj, cep):
+    cliente = Clientes(nome=nome, nome_fantasia=nome_fantasia, cpf_cnpj=cpf_cnpj, cep=cep)
     session.add(cliente)
     session.commit()
     return cliente
@@ -119,17 +125,25 @@ def criar_cliente(nome, cpf_cnpj, nome_fantasia):
 def listar_clientes():
     return session.query(Clientes).all()
 
-def atualizar_cliente(id, nome=None, cpf_cnpj=None, nome_fantasia=None):
-    cliente = session.query(Clientes).get(id)
-    if cliente:
-        if nome: cliente.nome = nome
-        if cpf_cnpj: cliente.cpf_cnpj = cpf_cnpj
-        if nome_fantasia: cliente.nome_fantasia = nome_fantasia
-        session.commit()
+def atualizar_cliente(id, nome=None, nome_fantasia=None, cpf_cnpj=None, cep=None):
+    cliente = session.query(Clientes).filter_by(id=id).first()
+    if not cliente:
+        return None
+    if nome is not None:
+        cliente.nome = nome
+    if nome_fantasia is not None:
+        cliente.nome_fantasia = nome_fantasia
+    if cpf_cnpj is not None:
+        cliente.cpf_cnpj = cpf_cnpj
+    if cep is not None:
+        cliente.cep = cep
+    session.commit()
     return cliente
 
 def deletar_cliente(id):
-    cliente = session.query(Clientes).get(id)
-    if cliente:
-        session.delete(cliente)
-        session.commit()
+    cliente = session.query(Clientes).filter_by(id=id).first()
+    if not cliente:
+        return False
+    session.delete(cliente)
+    session.commit()
+    return True
