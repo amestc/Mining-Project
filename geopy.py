@@ -38,3 +38,5 @@ if endereco:
         print("Não foi possível obter coordenadas para o endereço.")
 else:
     print("CEP inválido ou não encontrado.")
+
+
