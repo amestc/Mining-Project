@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mineradora</title>
+    <link rel="stylesheet" type="text/css" href="../styles/style.css">
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css"/>
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+</head>
+<body>
+<header class="cabecalho">
+    <div class="logo">
+        <img src="../imagens/logo.png" alt="Logo da Mineradora">
+    </div>
+    <div class="centraliza-botoes">
+        <button class="ribbon"><a href="index.html">Início</a></button>
+        <button class="ribbon"><a href="maquinas.html">Máquinas</a></button>
+        <button class="ribbon"><a href="materiais.html">Materiais</a></button>
+        <button class="ribbon"><a href="clientes.html">Clientes</a></button>
+        <button class="ribbon"><a href="simulacao.html">Simulação</a></button>
+    </div>
+</header>
+
+<section class="info_section_vertical">
+    <div class="info_section">
+        <div class="info_col">
+            <div class="info_edit"><b>NOME DO CLIENTE :</b></div>
+            <div class="info_edit"><b>NOME FANTASIA :</b></div>
+            <div class="info_edit"><b>CPF/CNPJ :</b></div>
+            <div class="info_edit"><b>CEP :</b></div>
+        </div>
+        <div class="info_col">
+            <div class="info_barra"></div>
+            <div class="info_barra"></div>
+            <div class="info_barra"></div>
+            <div class="info_barra"></div>
+        </div>
+        <div class="list">
+            <ul id="lista-clientes">
+                <li class="fixado">ID&nbsp;/&nbsp;Nome&nbsp;/&nbsp;Aluguel&nbsp;/&nbsp;Custo&nbsp;/&nbsp;KG</li>
+            </ul>
+        </div>
+    </div>
+    <div class="Botoes2">
+        <div class="Cadastrar"><b>Cadastrar</b></div>
+        <div class="Editar"><b>Editar</b></div>
+        <div class="Excluir"><b>Excluir</b></div>
+        <input type="text" id="input-pesquisa" class="Pesquisar" placeholder="Pesquisar máquina...">
+    </div>
+</section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let editando = false;
+            let clienteSelecionadoId = null;
+            let originalTexts = [];
+            const infoBarras = document.querySelectorAll(".info_barra");
+            const cadastrarBtn = document.querySelector(".Cadastrar");
+            const editarBtn = document.querySelector(".Editar");
+            const excluirBtn = document.querySelector(".Excluir");
+            const inputPesquisa = document.getElementById("input-pesquisa");
+
+            const botoesContainer = document.createElement("div");
+            botoesContainer.style.marginTop = "10px";
+            botoesContainer.style.display = "flex";
+            botoesContainer.style.gap = "10px";
+
+            const confirmarBtn = document.createElement("button");
+            confirmarBtn.innerText = "Confirmar";
+            confirmarBtn.className = "ribbon";
+
+            const cancelarBtn = document.createElement("button");
+            cancelarBtn.innerText = "Cancelar";
+            cancelarBtn.className = "ribbon";
+
+            botoesContainer.appendChild(confirmarBtn);
+            botoesContainer.appendChild(cancelarBtn);
+
+            async function carregarClientes() {
+                const response = await fetch("http://localhost:5000/clientes");
+                const clientes = await response.json();
+                const ul = document.getElementById("lista-clientes");
+                ul.querySelectorAll("li:not(.fixado)").forEach(li => li.remove());
+                clientes.forEach(cliente => {
+                    const li = document.createElement("li");
+                    li.innerText = `${cliente.id} - ${cliente.nome} / ${cliente.nome_fantasia} / ${cliente.cpf_cnpj} / ${cliente.cep}`;
+                    li.addEventListener("click", function() {
+                        clienteSelecionadoId = cliente.id;
+                        infoBarras[0].innerText = cliente.nome;
+                        infoBarras[1].innerText = cliente.nome_fantasia;
+                        infoBarras[2].innerText = cliente.cpf_cnpj;
+                        infoBarras[3].innerText = cliente.cep;
+                    });
+                    ul.appendChild(li);
+                });
+            }
+            carregarClientes();
+
+            // Pesquisa
+            inputPesquisa.addEventListener("input", function () {
+                const termo = inputPesquisa.value.toLowerCase();
+                const lista = document.querySelectorAll("#lista-clientes li:not(.fixado)");
+                lista.forEach(li => {
+                    if (li.innerText.toLowerCase().includes(termo)) {
+                        li.style.display = "";
+                    } else {
+                        li.style.display = "none";
+                    }
+                });
+            });
+
+            // Cadastro
+            cadastrarBtn.addEventListener("click", () => {
+                if (editando) return;
+                originalTexts = Array.from(infoBarras).map(el => el.innerText);
+                infoBarras.forEach(barra => {
+                    barra.setAttribute("contenteditable", "true");
+                    barra.innerText = "";
+                });
+                infoBarras[3].parentElement.appendChild(botoesContainer);
+                editando = "cadastro";
+            });
+
+            // Edição
+            editarBtn.addEventListener("click", () => {
+                if (editando) return;
+                const valores = Array.from(infoBarras).map(el => el.innerText.trim());
+                if (
+                    valores[0] === "valor 1" ||
+                    valores[1] === "valor 2" ||
+                    valores[2] === "valor 3" ||
+                    valores[3] === "valor 4" ||
+                    !clienteSelecionadoId
+                ) {
+                    mostrarPopup("Selecione um cliente da lista para editar.");
+                    return;
+                }
+                originalTexts = valores;
+                infoBarras.forEach(barra => barra.setAttribute("contenteditable", "true"));
+                infoBarras[3].parentElement.appendChild(botoesContainer);
+                editando = "edicao";
+            });
+
+            cancelarBtn.addEventListener("click", () => {
+                infoBarras.forEach((barra, i) => {
+                    barra.removeAttribute("contenteditable");
+                    barra.innerText = originalTexts[i];
+                });
+                botoesContainer.remove();
+                editando = false;
+            });
+
+            confirmarBtn.addEventListener("click", async () => {
+                const [nome, nome_fantasia, cpf_cnpj, cep] = Array.from(infoBarras).map(el => el.innerText.trim());
+                if (!nome || !nome_fantasia || !cpf_cnpj || !cep) {
+                    mostrarPopup("Preencha todos os campos!");
+                    return;
+                }
+                if (editando === "cadastro") {
+                    try {
+                        const resposta = await fetch("http://localhost:5000/clientes", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ nome, nome_fantasia, cpf_cnpj, cep })
+                        });
+                        if (resposta.ok) {
+                            mostrarPopup("Cliente cadastrado com sucesso!");
+                            infoBarras.forEach(barra => {
+                                barra.removeAttribute("contenteditable");
+                                barra.innerText = "";
+                            });
+                            botoesContainer.remove();
+                            editando = false;
+                            carregarClientes();
+                        } else {
+                            mostrarPopup("Erro ao cadastrar cliente.");
+                        }
+                    } catch (e) {
+                        mostrarPopup("Erro de conexão com o servidor.");
+                    }
+                } else if (editando === "edicao") {
+                    mostrarPopupConfirmacao(
+                        `As informações do cliente <b>${nome}</b> estão prestes a serem editadas. Deseja continuar?`,
+                        async () => {
+                            try {
+                                const resposta = await fetch(`http://localhost:5000/clientes/${clienteSelecionadoId}`, {
+                                    method: "PUT",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ nome, nome_fantasia, cpf_cnpj, cep })
+                                });
+                                if (resposta.ok) {
+                                    mostrarPopup("Cliente editado com sucesso!");
+                                    infoBarras.forEach((barra, i) => {
+                                        barra.removeAttribute("contenteditable");
+                                        barra.innerText = "valor " + (i + 1);
+                                    });
+                                    botoesContainer.remove();
+                                    editando = false;
+                                    clienteSelecionadoId = null;
+                                    carregarClientes();
+                                } else {
+                                    mostrarPopup("Erro ao editar cliente.");
+                                }
+                            } catch (e) {
+                                mostrarPopup("Erro de conexão com o servidor.");
+                            }
+                        },
+                        () => {
+                            infoBarras.forEach((barra, i) => {
+                                barra.removeAttribute("contenteditable");
+                                barra.innerText = originalTexts[i];
+                            });
+                            botoesContainer.remove();
+                            editando = false;
+                        }
+                    );
+                }
+            });
+
+            // Excluir
+            excluirBtn.addEventListener("click", () => {
+                if (!clienteSelecionadoId) {
+                    mostrarPopup("Selecione um cliente para excluir.");
+                    return;
+                }
+                mostrarPopupConfirmacao(
+                    `Tem certeza que deseja excluir o cliente <b>${infoBarras[0].innerText}</b>?`,
+                    async () => {
+                        try {
+                            const resposta = await fetch(`http://localhost:5000/clientes/${clienteSelecionadoId}`, {
+                                method: "DELETE"
+                            });
+                            if (resposta.ok) {
+                                mostrarPopup("Cliente excluído com sucesso!");
+                                clienteSelecionadoId = null;
+                                carregarClientes();
+                                infoBarras.forEach((barra, i) => barra.innerText = "valor " + (i + 1));
+                            } else {
+                                mostrarPopup("Erro ao excluir cliente.");
+                            }
+                        } catch (e) {
+                            mostrarPopup("Erro de conexão com o servidor.");
+                        }
+                    },
+                    () => {}
+                );
+            });
+
+            // Funções de popup (simples e confirmação)
+            function mostrarPopupConfirmacao(mensagem, onConfirm, onCancel) {
+                let popup = document.getElementById("popup");
+                if (!popup) {
+                    popup = document.createElement("div");
+                    popup.id = "popup";
+                    popup.className = "popup-overlay";
+                    document.body.appendChild(popup);
+                }
+                popup.innerHTML = `
+                    <div class="popup-box">
+                        <span id="popup-close" class="popup-close">×</span>
+                        <p id="popup-message">${mensagem}</p>
+                        <button id="popup-sim">SIM</button>
+                        <button id="popup-nao">NÃO</button>
+                    </div>
+                `;
+                popup.style.display = "flex";
+                document.getElementById("popup-sim").onclick = () => {
+                    popup.style.display = "none";
+                    onConfirm();
+                };
+                document.getElementById("popup-nao").onclick = () => {
+                    popup.style.display = "none";
+                    if (onCancel) onCancel();
+                };
+                document.getElementById("popup-close").onclick = () => {
+                    popup.style.display = "none";
+                    if (onCancel) onCancel();
+                };
+            }
+
+            function mostrarPopup(mensagem) {
+                let popup = document.getElementById("popup");
+                if (!popup) {
+                    popup = document.createElement("div");
+                    popup.id = "popup";
+                    popup.className = "popup-overlay";
+                    document.body.appendChild(popup);
+                }
+                popup.innerHTML = `
+                    <div class="popup-box">
+                        <span id="popup-close" class="popup-close">×</span>
+                        <p id="popup-message">${mensagem}</p>
+                    </div>
+                `;
+                popup.style.display = "flex";
+                document.getElementById("popup-close").onclick = () => {
+                    popup.style.display = "none";
+                };
+            }
+        });
+    </script>
+    <div id="popup" style="display:none;" class="popup-overlay"></div>
+
+</body>
+</html>
