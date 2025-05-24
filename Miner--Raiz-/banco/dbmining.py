@@ -2,7 +2,7 @@ from sqlalchemy import create_engine#Estou startando a conexão com o banco de d
 from sqlalchemy import Column, Integer, String, Numeric, PrimaryKeyConstraint #Estou importando os tipos de dados que vou usar nas colunas das tabelas
 from sqlalchemy.orm import sessionmaker #Estou importando o sessionmaker para criar uma sessão com o banco de dados
 from sqlalchemy.ext.declarative import declarative_base #Estou importando o declarative_base para criar as classes que representam as tabelas do banco de dados
-db = create_engine("mysql+pymysql://root:root123@127.0.0.1:3306/mineiradora")#Aqui eu passo os parametros de conexão com o banco de dados, como Usuario:senha:ip do banco:nome
+db = create_engine("mysql+pymysql://root:root123@127.0.0.1:3306/mineradora")#Aqui eu passo os parametros de conexão com o banco de dados, como Usuario:senha:ip do banco:nome
 
 Session = sessionmaker(bind=db) #Aqui eu crio uma sessão com o banco de dados
 session = Session() #Aqui eu crio uma sessão com o banco de dados
@@ -27,12 +27,12 @@ class Materiais(base):
     id = Column(Integer, primary_key=True, autoincrement=True) #Aqui eu defino a coluna id como chave primária
     nome = Column(String(50)) #Aqui eu defino a coluna nome como string com tamanho 50
     tipo = Column(String (50)) #Aqui eu defino a coluna tipo como string com tamanho 50
-    dureza = Column(Integer) #Aqui eu defino a coluna dureza como inteiro
+    peso = Column(Integer) #Aqui eu defino a coluna peso como inteiro
 
-    def __init__(self, nome, tipo, dureza): #Aqui eu crio o construtor da classe   
+    def __init__(self, nome, tipo, peso): #Aqui eu crio o construtor da classe   
         self.nome = nome #Aqui eu defino o nome do material
         self.tipo = tipo #Aqui eu defino o tipo do material
-        self.dureza = dureza #Aqui eu defino a dureza do material
+        self.peso = peso #Aqui eu defino a peso do material
 class Clientes(base):
     __tablename__ = "clientes" #Aqui eu defino o nome da tabela no banco de dados
     id = Column(Integer, primary_key=True, autoincrement=True) #Aqui eu defino a coluna id como chave primária
@@ -59,7 +59,15 @@ def criar_maquina(nome, custo, aluguel, kg):
     return maquina
 
 def listar_maquinas():
-    return session.query(Maquinas).all()
+    session = Session()
+    try:
+        return session.query(Maquinas).all()
+    except Exception as e:
+        session.rollback()
+        print("Erro ao listar máquinas:", e)
+        return []
+    finally:
+        session.close()
 
 def atualizar_maquina(id, nome=None, custo=None, aluguel=None, kg=None):
     maquina = session.query(Maquinas).filter_by(id=id).first()
@@ -85,16 +93,24 @@ def deletar_maquina(id):
     return True
 
 # Funções CRUD para Materiais
-def criar_material(nome, tipo, dureza):
-    material = Materiais(nome=nome, tipo=tipo, dureza=dureza)
+def criar_material(nome, tipo, peso):
+    material = Materiais(nome=nome, tipo=tipo, peso=peso)
     session.add(material)
     session.commit()
     return material
 
 def listar_materiais():
-    return session.query(Materiais).all()
+    session = Session()
+    try:
+        return session.query(Materiais).all()
+    except Exception as e:
+        session.rollback()
+        print("Erro ao listar materiais:", e)
+        return []
+    finally:
+        session.close()
 
-def atualizar_material(id, nome=None, tipo=None, dureza=None):
+def atualizar_material(id, nome=None, tipo=None, peso=None):
     material = session.query(Materiais).filter_by(id=id).first()
     if not material:
         return None
@@ -102,8 +118,8 @@ def atualizar_material(id, nome=None, tipo=None, dureza=None):
         material.nome = nome
     if tipo is not None:
         material.tipo = tipo
-    if dureza is not None:
-        material.dureza = dureza
+    if peso is not None:
+        material.peso = peso
     session.commit()
     return material
 
@@ -147,3 +163,7 @@ def deletar_cliente(id):
     session.delete(cliente)
     session.commit()
     return True
+
+def get_cliente_por_id(cliente_id):
+    from .dbmining import session, Clientes
+    return session.query(Clientes).filter_by(id=cliente_id).first()

@@ -4,42 +4,244 @@
   --container-height: 600px;
 }
 
-.popup-overlay {
+.rodape-fixo {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100vw;
+    background: #f4f4f4;
+    color: #37392e;
+    text-align: center;
+    font-size: 1.1em;
+    padding: 18px 0 10px 0;
+    z-index: 100;
+    box-shadow: 0 -2px 12px #0001;
+}
+.rodape-fixo p {
+    margin: 2px 0;
+}
+/* Popup de erro */
+.popup-erro {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.4);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
 }
-
-.popup-box {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  min-width: 300px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  position: relative;
+.popup-erro-box {
+  background: #fff;
+  padding: 32px 24px;
+  border-radius: 10px;
+  box-shadow: 0 4px 24px #0005;
+  min-width: 280px;
   text-align: center;
-  font-family: sans-serif;
 }
-
-.popup-close {
-  position: absolute;
-  top: 8px;
-  right: 12px;
-  font-size: 20px;
-  font-weight: bold;
+.popup-erro-box button {
+  margin-top: 18px;
+  padding: 8px 24px;
+  background: #e9760b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
 }
 
+.simulacao-container {
+    max-width: 500px;
+    margin: 60px auto 0 auto;
+    background: #fffbe6;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px #0002;
+    padding: -100vh 0 0 100vh;
+}
+.simulacao-container label {
+    font-weight: bold;
+    margin-top: 12px;
+    display: block;
+}
+.simulacao-container select, .simulacao-container input {
+    width: 100%;
+    padding: 8px;
+    margin: 8px 0 16px 0;
+    border-radius: 8px;
+    border: 1.5px solid #e9760b;
+    font-size: 1em;
+}
+.simulacao-container button {
+    width: 100%;
+    padding: 12px;
+    background: #e9760b;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin-top: 8px;
+}
+.simulacao-container button:hover {
+    background: #b85c09;
+}
+.resultados {
+    margin-top: 28px;
+    background: #fafafa;
+    border-radius: 10px;
+    padding: 18px 14px;
+    border: 1.5px solid #e9760b;
+}
+.resultados div {
+    margin-bottom: 10px;
+}
+
+.rodapeI {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px; /* Altura do rodapé */
+  background-color: #f4f4f4; /* Cor de fundo do rodapé */
+  color: #37392e; /* Cor do texto do rodapé */
+  font-size: 1.2em; /* Tamanho da fonte do rodapé */
+  position: relative;
+  z-index: 1;
+  background: rgba(255,255,255,0.95); /* Opcional: fundo branco translúcido */
+}
+
+.conteiner {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 64px; /* Espaço entre texto e imagem */
+  min-height: 100vh;
+  background-color: transparent;
+}
+
+.hero-bg {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: url('../imagens/mineracao-e-desafio-sustentavel-1280x627.jpg') no-repeat center center;
+    background-size: cover;
+    z-index: 0;
+}
+
+.conteudo-sobreposto {
+    position: relative;
+    z-index: 1;
+    margin-top: 100vh; /* Faz o conteúdo começar após a imagem */
+    background: rgba(255,255,255,0.95); /* Opcional: fundo branco translúcido */
+    padding: 0;
+    height: -100vh; /* Altura total da tela */
+}
+
+.texto {
+  flex: 2;
+  min-width: 250px;
+  padding: 40px 0 40px 80px;
+}
+
+.imagem-lateral {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+.imagem-lateral img {
+  max-width: 400px;
+  width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.simulacao{
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 32px;
+  margin-top:32px
+}
+
+.selecionado {
+    background: #ffe0b2;
+    border: 2px solid #e9760b;
+}
+
+#dias {
+    font-size: 1.1em;
+    text-align: center;
+    border-radius: 6px;
+    border: 1px solid #e9760b;
+    margin-left: 8px;
+}
+
+.resultado-bloco {
+    background: #fffbe6;
+    border: 1.5px solid #e9760b;
+    border-radius: 10px;
+    margin: 10px 0;
+    padding: 14px 18px;
+    font-size: 1.1em;
+    text-align: left;
+}
+
+.resultado-bloco {
+    background: #fffbe6;
+    border: 1.5px solid #e9760b;
+    border-radius: 10px;
+    margin: 10px 0;
+    padding: 14px 18px;
+    font-size: 1.1em;
+    text-align: left;
+}
+
+.lista-sim {
+    list-style: none;
+    padding: 0;
+    min-width: 220px;
+    border: 1.5px solid #ccc;
+    border-radius: 12px;
+    background: #fafafa;
+    min-height: 220px;
+}
+.lista-sim li.selecionado {
+    background: #ffe0b2;
+    font-weight: bold;
+    border: 2px solid #e9760b;
+}
+.lista-sim li:hover {
+    background: #f9d9b7;
+}
+
+.popup-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+.popup-box {
+    background: #fff;
+    padding: 32px 28px;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px #0002;
+    min-width: 260px;
+    max-width: 90vw;
+    text-align: center;
+    position: relative;
+}
+.popup-close {
+    position: absolute;
+    top: 8px; right: 16px;
+    font-size: 1.5em;
+    cursor: pointer;
+    color: #e9760b;
+}
 .popup-box p {
-  margin-top: 20px;
-  font-size: 16px;
+    margin: 0;
+    font-size: 1.1em;
 }
 
 .Botoes2 {
@@ -438,4 +640,48 @@ button:disabled {
   align-items: center;
   justify-content: center;
   /* Outros estilos já existentes */
+}
+
+.conteudo-flex {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 48px; /* Espaço entre texto e imagem */
+}
+
+.simulacao-flex {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 48px;
+    margin-top: 60px;
+    margin-bottom: 60px;
+}
+
+.simulacao-container {
+    min-width: 320px;
+    max-width: 600px;
+    flex: 1;
+    margin: 0 auto 0 500px;
+    padding: 20px;
+    height: 60vh;
+    
+}
+
+.sessao-resultados {
+    min-width: 480px;
+    max-width: 350px;
+    flex: 1;
+    margin: 0 auto 0 -400px;
+    align-items: center;
+}
+
+.resultados {
+    background: #fafafa;
+    border-radius: 10px;
+    padding: 35px 25px;
+    border: 1.5px solid #e9760b;
+    margin-top: 0;
+    margin-bottom: 15em;
 }

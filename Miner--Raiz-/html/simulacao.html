@@ -3,25 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mineradora</title>
+    <title>Simulação</title>
     <link rel="stylesheet" type="text/css" href="../styles/style.css">
-    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css"/>
-    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
 </head>
 <body>
-<header class="cabecalho">
-    <div class="logo">
-        <img src="../imagens/logo.png" alt="Logo da Mineradora">
-    </div>
-    <div class="centraliza-botoes">
-        <button class="ribbon"><a href="index.html">Início</a></button>
-        <button class="ribbon"><a href="maquinas.html">Máquinas</a></button>
-        <button class="ribbon"><a href="materiais.html">Materiais</a></button>
-        <button class="ribbon"><a href="clientes.html">Clientes</a></button>
-        <button class="ribbon"><a href="simulacao.html">Simulação</a></button>
-    </div>
-</header>
+    <header class="cabecalho">
+        <div class="logo">
+            <img src="../imagens/logo.png" alt="Logo da Mineradora">
+        </div>
+        <div class="centraliza-botoes">
+            <button class="ribbon"><a href="index.html">Início</a></button>
+            <button class="ribbon"><a href="maquinas.html">Máquinas</a></button>
+            <button class="ribbon"><a href="materiais.html">Materiais</a></button>
+            <button class="ribbon"><a href="clientes.html">Clientes</a></button>
+            <button class="ribbon"><a href="simulacao.html">Simulação</a></button>
+        </div>
+    </header>
 
+    <div class="simulacao-flex">
+        <div class="simulacao-container">
+            <h2>Simulação de Aluguel</h2>
+            <label for="select-maquina">Selecione a Máquina:</label>
+            <select id="select-maquina">
+                <option value="">Carregando...</option>
+            </select>
+
+            <label for="select-material">Selecione o Minério:</label>
+            <select id="select-material">
+                <option value="">Carregando...</option>
+            </select>
+
+            <!-- Troque o campo de endereço por CEP -->
+            <label for="input-cep">Digite o CEP ou endereço do Cliente:</label>
+            <input type="text" id="input-cep" placeholder="Ex: 12345-678" maxlength="50">
+
+            <label for="input-dias">Dias de aluguel:</label>
+            <input type="number" id="input-dias" min="1" value="1">
+
+            <button id="btn-calcular">Calcular</button>
+        </div>
+        <section class="sessao-resultados">
+            <div class="resultados" id="resultados">
+                <h3>Resultados da Simulação</h3>
+                <div><b>Distância:</b> <span id="res-distancia">-</span> km</div>
+                <div><b>Aluguel Total:</b> <span id="res-aluguel">-</span></div>
+                <div><b>Custo Total:</b> <span id="res-custo">-</span></div>
+                <div><b>Valor Total:</b> <span id="res-valor">-</span></div>
+                <div><b>Capacidade Total:</b> <span id="res-capacidade">-</span></div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+    // Carrega máquinas e materiais ao abrir a página
+    document.addEventListener("DOMContentLoaded", function() {
+        fetch("http://localhost:5000/maquinas")
+            .then(resp => resp.json())
+            .then(maquinas => {
+                const select = document.getElementById("select-maquina");
+                select.innerHTML = '<option value="">Selecione...</option>';
+                maquinas.forEach(m => {
+                    select.innerHTML += `<option value="${m.id}">${m.nome} (Aluguel: R$${m.aluguel}, Custo: R$${m.custo}, KG: ${m.kg})</option>`;
+                });
+            });
+
+        fetch("http://localhost:5000/materiais")
+            .then(resp => resp.json())
+            .then(materiais => {
+                const select = document.getElementById("select-material");
+                select.innerHTML = '<option value="">Selecione...</option>';
+                materiais.forEach(m => {
+                    select.innerHTML += `<option value="${m.id}">${m.nome} (Tipo: ${m.tipo}, Peso: ${m.peso}KG)</option>`;
+                });
+            });
+    });
+
+    document.getElementById("btn-calcular").onclick = function() {
+        const maquina_id = document.getElementById("select-maquina").value;
+        const material_id = document.getElementById("select-material").value;
+        const cep = document.getElementById("input-cep").value.trim();
+        const dias = parseInt(document.getElementById("input-dias").value) || 1;
+
+        if (!maquina_id || !material_id || !cep) {
+            mostrarPopupErro("Selecione uma máquina, um minério e informe o CEP.");
+            return;
+        }
+
+        // Chama a simulação diretamente
+        fetch("http://localhost:5000/simulacao/calcular", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                maquina_id: maquina_id,
+                material_id: material_id,
+                cep: cep,
+                dias: dias
+            })
+        })
+        .then(resp => resp.json())
+        .then(res => {
+            if (res.erro) {
+                mostrarPopupErro(res.erro);
+                return;
+            }
+            document.getElementById("res-distancia").textContent = res.distancia !== null && res.distancia !== undefined ? res.distancia.toFixed(2) : "-";
+            document.getElementById("res-aluguel").textContent = res.aluguel_total !== null && res.aluguel_total !== undefined ? "R$ " + res.aluguel_total.toFixed(2) : "-";
+            document.getElementById("res-custo").textContent = res.custo_total !== null && res.custo_total !== undefined ? "R$ " + res.custo_total.toFixed(2) : "-";
+            document.getElementById("res-valor").textContent = res.valor_total !== null && res.valor_total !== undefined ? "R$ " + res.valor_total.toFixed(2) : "-";
+            document.getElementById("res-capacidade").textContent = res.capacidade_total !== null && res.capacidade_total !== undefined ? res.capacidade_total.toFixed(2) + "KG" : "-KG";
+        })
+        .catch(e => mostrarPopupErro("Erro na simulação: " + e.message));
+    };
+
+    function mostrarPopupErro(msg) {
+        document.getElementById('popup-erro-msg').textContent = msg;
+        document.getElementById('popup-erro').style.display = 'flex';
+    }
+    </script>
+
+    <!-- Popup de erro -->
+<div id="popup-erro" class="popup-erro" style="display:none;">
+  <div class="popup-erro-box">
+    <span id="popup-erro-msg"></span>
+    <button onclick="document.getElementById('popup-erro').style.display='none'">Fechar</button>
+  </div>
+</div>
+
+<footer class="rodape-fixo">
+    <div>
+        <p>&copy; 2025 - Todos os direitos reservados</p>
+        <p>Desenvolvido por Alunos da UniFecaf</p>
+    </div>
+</footer>
 
 
 </body>

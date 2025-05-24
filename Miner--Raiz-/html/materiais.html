@@ -28,7 +28,7 @@
     <div class="info_col">
         <div class="info_edit"><b>NOME DO MATERIAL :</b></div>
         <div class="info_edit"><b>TIPO DO MATERIAL :</b></div>
-        <div class="info_edit"><b>DUREZA :</b></div>
+        <div class="info_edit"><b>PESO POR UNIDADE EM KG :</b></div>
     </div>
     <div class="info_col">
         <div class="info_barra"></div>
@@ -37,7 +37,7 @@
     </div>
     <div class="list">
         <ul id="lista-materiais">
-            <li class="fixado">ID&nbsp;/&nbsp;Nome do Material&nbsp;/&nbsp;Tipo do Material&nbsp;/&nbsp;Dureza do Material</li>
+            <li class="fixado">ID&nbsp;/&nbsp;Nome do Material&nbsp;/&nbsp;Tipo do Material&nbsp;/&nbsp;Peso do Material em KG</li>
         </ul>
     </div>
 
@@ -53,27 +53,14 @@
 </section>
 
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            async function carregarClientes() {
-                const response = await fetch("http://localhost:5000/materiais");
-                const clientes = await response.json();
-                console.log(clientes); // Veja o que chega da API
-                const ul = document.getElementById("lista-materiais");
-                clientes.forEach(materiais => {
-                    const li = document.createElement("li");
-                    li.innerText = `${materiais.nome} / ${materiais.tipo} / ${materiais.dureza}Kg`;
-                    ul.appendChild(li);
-                });
-            }
-            carregarClientes();
-        });
+ <script>
+let editando = false;
+let materialSelecionadoId = null;
+let originalTexts = [];
+let infoBarras;
 
 document.addEventListener("DOMContentLoaded", function () {
-    let editando = false;
-    let materialSelecionadoId = null;
-    let originalTexts = [];
-    const infoBarras = document.querySelectorAll(".info_barra");
+    infoBarras = document.querySelectorAll(".info_barra");
     const cadastrarBtn = document.querySelector(".Cadastrar");
     const editarBtn = document.querySelector(".Editar");
     const excluirBtn = document.querySelector(".Excluir");
@@ -95,24 +82,6 @@ document.addEventListener("DOMContentLoaded", function () {
     botoesContainer.appendChild(confirmarBtn);
     botoesContainer.appendChild(cancelarBtn);
 
-    async function carregarMateriais() {
-        const response = await fetch("http://localhost:5000/materiais");
-        const materiais = await response.json();
-        const ul = document.getElementById("lista-materiais");
-        ul.querySelectorAll("li:not(.fixado)").forEach(li => li.remove());
-        materiais.forEach(material => {
-            const li = document.createElement("li");
-            li.innerText = `${material.id} - ${material.nome} / ${material.tipo} / ${material.dureza}`;
-            li.addEventListener("click", function() {
-                materialSelecionadoId = material.id;
-                infoBarras[0].innerText = material.nome;
-                infoBarras[1].innerText = material.tipo;
-                infoBarras[2].innerText = material.dureza;
-            });
-            ul.appendChild(li);
-        });
-    }
-    carregarMateriais();
 
     // Pesquisa
     inputPesquisa.addEventListener("input", function () {
@@ -168,8 +137,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     confirmarBtn.addEventListener("click", async () => {
-        const [nome, tipo, dureza] = Array.from(infoBarras).map(el => el.innerText.trim());
-        if (!nome || !tipo || !dureza) {
+        const [nome, tipo, peso] = Array.from(infoBarras).map(el => el.innerText.trim());
+        if (!nome || !tipo || !peso) {
             mostrarPopup("Preencha todos os campos!");
             return;
         }
@@ -178,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const resposta = await fetch("http://localhost:5000/materiais", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ nome, tipo, dureza })
+                    body: JSON.stringify({ nome, tipo, peso })
                 });
                 if (resposta.ok) {
                     mostrarPopup("Material cadastrado com sucesso!");
@@ -203,7 +172,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         const resposta = await fetch(`http://localhost:5000/materiais/${materialSelecionadoId}`, {
                             method: "PUT",
                             headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ nome, tipo, dureza })
+                            body: JSON.stringify({ nome, tipo, peso })
                         });
                         if (resposta.ok) {
                             mostrarPopup("Material editado com sucesso!");
@@ -314,8 +283,36 @@ document.addEventListener("DOMContentLoaded", function () {
             popup.style.display = "none";
         };
     }
+
+    carregarMateriais();
 });
+
+async function carregarMateriais() {
+    const response = await fetch("http://localhost:5000/materiais");
+    const materiais = await response.json();
+    const ul = document.getElementById("lista-materiais");
+    ul.querySelectorAll("li:not(.fixado)").forEach(li => li.remove());
+    materiais.forEach(material => {
+        const li = document.createElement("li");
+        li.innerText = `${material.id} - ${material.nome} / ${material.tipo} / ${material.peso}KG`;
+        li.addEventListener("click", function() {
+            materialSelecionadoId = material.id;
+            if (infoBarras) {
+                infoBarras[0].innerText = material.nome;
+                infoBarras[1].innerText = material.tipo;
+                infoBarras[2].innerText = material.peso;
+            }
+        });
+        ul.appendChild(li);
+    });
+}
 </script>
 <div id="popup" style="display:none;" class="popup-overlay"></div>
+<footer class="rodape-fixo">
+    <div>
+        <p>&copy; 2025 - Todos os direitos reservados</p>
+        <p>Desenvolvido por Alunos da UniFecaf</p>
+    </div>
+</footer>
 </body>
 </html>
