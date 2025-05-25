@@ -12,7 +12,7 @@ Live server
 
 Python
 
-Rodar no terminal
+Rodar no terminal:
 
 pip install sqlalchemy
 
