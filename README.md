@@ -1,10 +1,10 @@
 Para que este projeto funcione corretamente deve se seguir os seguintes passos:
 
-Instalar
+Instalar:
 Python 3.10 ou superior
 Banco de dados: de preferencia MySql Workbench
 
-Instalar as seguintes extensões do VsCode
+Instalar as seguintes extensões do VsCode:
 Live server
 Python
 
