@@ -1,18 +1,44 @@
+Este projeto foi feito e idealizado para o trabalho da faculdade UniFecaf para a ExpoTech
+
+-------------------------------------------
+
+Trabalho feito por:
+--------------------------------------------------------------------------------------
+
+Camila Cesco Ferreira RA: 77929
+
+Isabella Santos de Albuquerque Zanin RA: 105446
+
+Leandro Laurindo RA: 82263
+
+Marcelo Luna Ierardi RA: 95121
+
+Pedro Henrique Pedroso RA: 21293
+
+--------------------------------------------------------------------------------------
+
 Para que este projeto funcione corretamente deve se seguir os seguintes passos:
+-------------------------------------------
 
+--------------------------------------------------------------------------------------
 Instalar:
-
+-------------------------------------------
 Python 3.10 ou superior
 
 Banco de dados: de preferencia MySql Workbench
 
-Instalar as seguintes extensões do VsCode:
+-------------------------------------------
 
+Instalar as seguintes extensões do VsCode:
+-------------------------------------------
 Live server
 
 Python
 
+-------------------------------------------
+
 Rodar no terminal:
+-------------------------------------------
 
 pip install sqlalchemy
 
@@ -26,14 +52,24 @@ pip install flask-cors
 
 python -m pip install requests geopy
 
+-------------------------------------------
+
 Criar o banco mineradora no banco de dados
+-------------------------------------------
 
 create database mineradora;
 
-editar no dbmining.py na linha 5 a rota para o banco de dados da seguinte forma
+-------------------------------------------
+
+Editar no dbmining.py na linha 5 a rota para o banco de dados da seguinte forma
+-------------------------------------------
 
 db = create_engine("mysql+pymysql://[usuario do banco de dados]:[senha do usuario]@127.0.0.1:3306/mineradora")
 
-abrir api.py e executa-la
+-------------------------------------------
+
+abrir e executar api.py
 
 abrir o index.html e clicar em "Go Live" no canto inferior direito
+
+-------------------------------------------
