@@ -5,15 +5,15 @@ Este projeto foi feito e idealizado para o trabalho da faculdade UniFecaf para a
 Trabalho feito por:
 --------------------------------------------------------------------------------------
 
-Camila Cesco Ferreira RA: 77929
+Camila Cesco Ferreira
 
-Isabella Santos de Albuquerque Zanin RA: 105446
+Isabella Santos de Albuquerque Zanin
 
-Leandro Laurindo RA: 82263
+Leandro Laurindo Soares
 
-Marcelo Luna Ierardi RA: 95121
+Marcelo Luna Ierardi
 
-Pedro Henrique Pedroso RA: 21293
+Pedro Henrique Pedroso
 
 --------------------------------------------------------------------------------------
 
